@@ -1,5 +1,5 @@
 import numpy as np
-
+from math import exp
 def loaddataset():
     dataset = []
     labels  = []
@@ -11,8 +11,25 @@ def loaddataset():
         labels.append(int(linearr[2]))
     return dataset, labels
 
+def sigmod(inx):
+    return 1.0 / (1 + np.exp(-inx))
+
+def gradascent(dataset, labels):
+    datasetmatrix = np.asmatrix(dataset)
+    labelsmatrix  = np.asmatrix(labels).transpose()
+    m,n = np.shape(datasetmatrix)
+    alpha = 0.001
+    maxcycle = 500
+    weights = np.ones((n,1))
+
+    for k in range(maxcycle):
+        h = sigmod(datasetmatrix * weights)
+        error = (labelsmatrix - h)
+        weights = weights + alpha * datasetmatrix.transpose() * error
+    return weights
+
+
 if __name__ == '__main__':
     dataset, labels = loaddataset()
-    print(dataset)
-    print(labels)
-    
+    weights = gradascent(dataset, labels)
+    print(weights)
